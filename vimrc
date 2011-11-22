@@ -1,5 +1,58 @@
-set nocompatible
 
+
+" Normal mode
+" Space => Search, with very magic by default ("Normal" regex mode, more info)
+" ,Space => Clear search highlight
+" ,v => Splits to a new vertical split and switch to it
+" Control + [h,j,k,l] => move between splits
+" Tab => Next buffer
+" Shift + Tab => Previous buffer
+" ,q => Save and close all (:wqa!)
+" ,w => Save (:w!)
+" ,Esc => Quit without saving (:q!)
+" Shift + r => Execute current buffer as ruby
+" ,d => Delete current buffer (bd)
+" ,D => Delete all buffer
+"
+" Function Keys
+" F6 => Toggle Number
+" F3 => Disable autoindent in VIM
+" F2 => Toggle paste mod
+"
+" Visual mode
+"
+" ,g => git blame
+" ,h => get a link in the clipboard referencing the selected lines in Github
+"
+" Insert mode
+"
+" Plugins related
+"
+" ,a => Ack search
+" ,a| => Align Cucumber Tables
+" ,a= => Align lines with =
+" ,a: => Align lines with :
+" Control + [n,p] => Rotate Ack results
+" ,co => Comment lines
+" ,b => Fuzzy buffer explorer
+" ,l => Tag list
+" ,o => PeepOpen
+" ,p => Nerd tree
+" ,R => RbREPL
+" ,8 => PEP8
+"
+"
+au BufEnter * if &filetype == "" | set filetype=text | endif
+au BufRead,BufNewFile *.log set filetype=error_log
+au BufRead,BufNewFile *.txt set filetype=text
+"
+au FileType text setlocal noai nocin nosi inde=
+au FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
+au FileType python set omnifunc=pythoncomplete#Complete
+au FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+au FileType javascript setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
+set nocompatible
 set modelines=0
 
 " Tab settings
@@ -7,13 +60,6 @@ set tabstop=2
 set shiftwidth=2
 set softtabstop=2
 set expandtab
-
-au FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
-au FileType javascript setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
-au BufRead,BufNewFile *.log set filetype=error_log
-
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 
 " Fancy things in 7.3
 
@@ -83,6 +129,15 @@ set tw=80
 " set list
 " set listchars=tab:▸\ ,eol:¬
 
+" Mappings
+
+" Disabling auto indent
+nnoremap <F3> :setl noai ai? nocin nosi inde=<CR>
+
+" Toggle line number
+nmap <silent> <F6> :set number!<CR>
+
+"
 " Move around lines
 nnoremap <up> <nop>
 nnoremap <down> <nop>
@@ -140,8 +195,6 @@ nmap <leader>w :w!<CR>
 nmap <leader><Esc> :q!<CR>
 
 
-let Tlist_Ctags_Cmd='/usr/bin/ctags'
-
 " Set the tag file search order
 " set tags=./tags;
 " let Tlist_WinWidth = 60
@@ -160,7 +213,6 @@ set pastetoggle=<F2>
 
 " Load all bundles in .vim/bundles
 call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
 
 " pep8
 let g:pep8_map='<leader>8'
