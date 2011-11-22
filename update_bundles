@@ -1,0 +1,117 @@
+#!/usr/bin/env ruby
+
+git_bundles = [
+  #Javascript Realted Module(s)
+  "git://github.com/hallettj/jslint.vim.git",
+  "git://github.com/mmalecki/vim-node.js.git",
+
+  #Python Related Module
+  "git://github.com/cburroughs/pep8.git",
+  "git://github.com/vim-scripts/pydoc.vim.git",
+  "git://github.com/mitechie/pyflakes-pathogen.git",
+
+  #Additional Modules
+  "git://github.com/vim-scripts/taglist.vim.git",
+
+  "git://github.com/mileszs/ack.vim.git",
+  # "git://github.com/tpope/vim-fugitive",
+  # "git://github.com/tpope/vim-rails.git",
+  "git://github.com/tpope/vim-surround.git",
+  "git://github.com/tpope/vim-cucumber.git",
+  # "git://github.com/tpope/vim-speeddating",
+  'git://github.com/plasticboy/vim-markdown.git',
+  # "git://github.com/chrismetcalf/vim-yankring.git",
+  # "git://github.com/chrismetcalf/vim-taglist.git",
+  "git://github.com/tpope/vim-endwise.git",
+  # "git://github.com/scrooloose/syntastic.git",
+
+  "git://github.com/codegram/vim-todo.git",
+  "git://github.com/codegram/vim-numberlock.git",
+
+  "git://github.com/Townk/vim-autoclose.git",
+
+  "git://github.com/scrooloose/nerdtree.git",
+  "git://github.com/wincent/Command-T.git",
+  # "git://github.com/rstacruz/sparkup.git",
+
+  # "git://github.com/panozzaj/vim-autocorrect.git",
+
+  "git://github.com/tsaleh/vim-tcomment.git",
+
+  # "git://github.com/shemerey/vim-peepopen.git",
+
+  # "git://github.com/sjl/gundo.vim.git",
+
+  "git://github.com/vim-scripts/L9.git",
+  "git://github.com/clones/vim-fuzzyfinder.git",
+
+  "git://github.com/godlygeek/tabular.git",
+  'git://github.com/bbommarito/vim-slim.git',
+  # "git://github.com/vim-scripts/Gist.vim.git",
+
+  "git://github.com/kchmck/vim-coffee-script.git",
+
+  "git://github.com/altercation/vim-colors-solarized.git",
+  "git://github.com/vim-scripts/bufkill.vim.git",
+  "git://github.com/Bogdanp/rbrepl.vim.git",
+
+  "git://github.com/vim-scripts/VimClojure.git"
+]
+
+vim_org_scripts = [
+  # ["githublink","https://github.com/tenderlove/dot_vim/raw/master/plugin/githublink.vim","blob"]
+]
+
+require 'fileutils'
+require 'open-uri'
+
+bundles_dir = File.join(File.dirname(__FILE__), "bundle")
+
+FileUtils.cd(bundles_dir)
+
+puts "Trashing everything (lookout!)"
+Dir["*"].each {|d| FileUtils.rm_rf d }
+
+git_bundles.each do |url|
+  dir = url.split('/').last.sub(/\.git$/, '')
+  puts "  Unpacking #{url} into #{dir}"
+  `git clone #{url} #{dir}`
+  FileUtils.rm_rf(File.join(dir, ".git"))
+end
+
+vim_org_scripts.each do |name, script_id, script_type|
+  puts "  Downloading #{name}"
+  if script_type == 'blob'
+    local_file = File.join(name, "plugin", "#{name}.vim")
+    FileUtils.mkdir_p(File.dirname(local_file))
+    puts "Created #{local_file}"
+    a = File.open(local_file, "w") do |file|
+      file << open(script_id).read
+      puts local_file
+      puts file.inspect
+    end
+    puts a.inspect
+    next
+  end
+  if script_type == 'zip'
+    local_file = File.join(name, "#{name}.zip")
+  else
+    local_file = File.join(name, script_type, "#{name}.vim")
+  end
+  FileUtils.mkdir_p(File.dirname(local_file))
+  File.open(local_file, "w") do |file|
+    file << open("http://www.vim.org/scripts/download_script.php?src_id=#{script_id}").read
+  end
+  if script_type == "zip"
+    FileUtils.cd(File.dirname(local_file))
+    system("unzip #{name}.zip")
+    system("rm #{name}.zip")
+    FileUtils.cd('..')
+  end
+end
+
+# Compile CommandT
+
+puts 'Compiling CommandT...'
+`pwd && cd Command-T && rake make`
+puts 'Compiled!'
