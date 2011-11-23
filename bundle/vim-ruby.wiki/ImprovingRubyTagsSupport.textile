@@ -1,0 +1,52 @@
+Exuberant ctags out of the box doesn't do a number of useful things:
+
+- It doesn't deal with:
+
+@module A::B@
+
+- It doesn't tag (at least some of) the "operator" methods like '=='
+
+- It doesn't support qualified tags, --type=+
+
+Given that ruby objects tend to have the same methods in many, many classes, this is a killer, which #to_s did you want to look at? :-)
+
+- It doesn't know initialise is really "new" (usually).
+
+- It doesn't output multiple tags for methods with same indent level and same name in the same file:
+
+<pre>
+<code>
+ class First
+   def to_s
+   end
+ end
+ class Second
+   def to_s
+   end
+ end
+</code>
+</pre>
+
+This will generate only a single tag for #to_s with a search pattern of "/^ def to_s/", which will find the first, only, AFAICT.
+
+- It doesn't output tags for constants or attributes.
+
+h3. Patch available!
+
+See the Exuberant ctags mailing list, where Elliott Hughes (who wrote this) posted a patch for this. His editor, "Edit":http://software.jessies.org/evergreen/, uses Exuberant ctags to show a tree of classes and methods where what you're editing is highlighted, and you can click elsewhere to jump to that method, so he needed better Ruby support.
+
+It's not perfect (it doesn't use the real Ruby yacc parser), but it's pretty good.
+
+h3. Hacking rdoc
+
+Why try to build a ruby parser in C if it's a) hard, and b) its already been done.
+
+OK, what parses ruby code and knows the line numbers, and the full names of all the classes? Rdoc!
+
+Not only that, it knows constants and attributes!
+
+So, I'm trying to hack rdoc to give it a 'tags' output format generator.
+
+Will report on results soon. One thing is obvious so far, exhuberant ctags is lightning fast.. and rdoc is anything but. I can live with that to get qualified tags, though. (You don't need to; see above.)
+
+- Sam Roberts

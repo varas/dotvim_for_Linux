@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 git_bundles = [
+  #Ruby Related Module(s)
+  "git://github.com/vim-ruby/vim-ruby.wiki.git",
+
   #Javascript Realted Module(s)
   "git://github.com/hallettj/jslint.vim.git",
   "git://github.com/mmalecki/vim-node.js.git",
@@ -14,6 +17,9 @@ git_bundles = [
   "git://github.com/vim-scripts/taglist.vim.git",
   "git://github.com/mileszs/ack.vim.git",
   "git://github.com/tpope/vim-fugitive.git",
+  "git://github.com/greyblake/vim-preview.git",
+  "git://github.com/scrooloose/syntastic.git",
+
   # "git://github.com/tpope/vim-rails.git",
   "git://github.com/tpope/vim-surround.git",
   "git://github.com/tpope/vim-cucumber.git",
@@ -60,7 +66,9 @@ git_bundles = [
 vim_org_scripts = [
   # ["githublink","https://github.com/tenderlove/dot_vim/raw/master/plugin/githublink.vim","blob"]
 ]
-
+snippets = [
+  ["git://github.com/asux/snipmate-snippets.git", "snippets"]
+]
 require 'fileutils'
 require 'open-uri'
 

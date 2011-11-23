@@ -1,0 +1,279 @@
+h2. Introduction
+
+_NOTE: The latest version of these runtime files for Vim can be found packaged together as part of the the "Vim-Ruby Configuration Files project":http://vim-ruby.rubyforge.org_
+
+If you install Vim 7.x, the following Ruby support is enabled out of the box:
+
+    * *syntax highlighting* for Ruby and eRuby
+    * automatic, *smart indenting* for Ruby and eRuby
+    * *compiler plugins* for running Ruby, eRuby, Test::Unit and RSpec files
+    * IntelliSense-like *autocompletion* (when compiled with the Ruby interface) 
+
+These files are maintained by @segfault, @dkearns, @tpope, @AndrewRadev, and @now.
+
+The purpose of this article is to describe what these features are, how they work, and how you can add other Ruby features. The target readership is those who use Ruby and Vim, but are not sure how to get the most out of the combination.
+
+h2. Special files that come with Vim
+
+When you install Vim 7.3 (please don't use 6.x if you can help it!), the following important files are created (@$VIMRUNTIME@ is the directory where the Vim runtime files are installed, like @/usr/share/vim/vim70@ or @C:\Program Files\vim\vim70@):
+
+    * $VIMRUNTIME/autoload/rubycomplete.vim
+    * $VIMRUNTIME/compiler/eruby.vim
+    * $VIMRUNTIME/compiler/rspec.vim
+    * $VIMRUNTIME/compiler/rubyunit.vim
+    * $VIMRUNTIME/compiler/ruby.vim
+    * $VIMRUNTIME/ftplugin/eruby.vim
+    * $VIMRUNTIME/ftplugin/ruby.vim
+    * $VIMRUNTIME/indent/eruby.vim
+    * $VIMRUNTIME/indent/ruby.vim
+    * $VIMRUNTIME/syntax/eruby.vim
+    * $VIMRUNTIME/syntax/ruby.vim 
+
+Since Vim 6.x, a lot of configuration and extensions have been placed in plugins. For instance, from "VimOnline":http://www.vim.org you can download plugins for a calendar or tetris. These are _global_ plugins. The files we are concerned with are _filetype-specific_ plugins.
+
+h2. Filetypes
+
+The notion of _filetype_ is central to Vim. When you load a file, Vim decides (based on either the filename extension or the file contents) the type of file you are editing. It then loads the specific runtime files for that filetype, in order to highlight it, indent it, and apply whatever other settings are deemed appropriate for files of that type.
+
+Files with either a filename extension of @.rb@ or a ruby shebang line (@#!/usr/bin/ruby@) will be set to filetype "ruby" and files with a filename extension of @.rhtml@ will be set to filetype "eruby".
+
+h3. Filetype Plugins
+
+The filetype plugin files (ftplugin/*) are a place for miscellaneous configuration when editing Ruby and eRuby code: mappings, options, matchit configuration etc.
+
+See @:help matchit-activate@ for an explanation of how to enable the matchit global plugin. There is also a summary at the end of the ftplugin/ruby.vim file.
+
+h3. Syntax Files
+
+The syntax files contain instructions for Vim to highlight Ruby and eRuby code.
+
+See @:help ft-ruby-syntax@ for more details, including configuration options.
+
+h3. Indent Files
+
+The indent files contain instructions for Vim to automatically indent Ruby and eRuby code.
+
+h3. Compiler Plugins
+
+The compiler plugins contain instructions which allow Vim to run the specified source file with an appropriate executable, parse any errors, and jump to the corresponding error location if required.
+
+    * the ruby compiler will run the specified Ruby file with ruby
+    * the eruby compiler will run the specified eRuby file with eruby
+    * the rubyunit compiler will run the specified Test::Unit file with testrb 
+
+_TODO: explain how to use these plugins_
+
+h3. Omni Completion Functions
+
+The omni completion function (autoload/rubycomplete.vim) file offers context sensitive ("IntelliSense-like":http://en.wikipedia.org/wiki/IntelliSense) completion similar to that available in irb.
+
+_NOTE: This functionality is new for Vim 7 and requires a version of Vim compiled with the Ruby interface - see @:help ruby@_
+
+To activate the completion menu type @CTRL-XCTRL-O@ while in insert mode.
+
+See @:help ft-ruby-omni@ and @:help i_CTRL-X_CTRL-O@ for more details.
+
+h2. Installing the latest version
+
+While these files are included as part of the standard Vim distribution they tend to be updated more frequently than Vim itself. The latest can always be installed via "RubyGems":http://rubygems.org/
+
+<pre>
+<code>
+# gem install vim-ruby --remote
+# vim-ruby-install.rb
+</code>
+</pre>
+
+or alternatively by downloading the appropriate "archive file":http://rubyforge.org/frs/?group_id=16
+
+Note: You need root privilege to run "gem install ... " command. - Minkoo Seo
+
+Not necessarily - it's possible to [install rubygems in a user directory] - DougKearns
+
+h2. Enabling Ruby Extensions
+
+Unfortunately, although Vim has all this power, it is not enabled by default, primarily for "backward compatibility", I suppose. So make sure these lines are contained within your @$HOME/.vimrc@ file:
+
+<pre>
+<code>
+set nocompatible      " We're running Vim, not Vi!
+syntax on             " Enable syntax highlighting
+filetype on           " Enable filetype detection
+filetype indent on    " Enable filetype-specific indenting
+filetype plugin on    " Enable filetype-specific plugins
+</code>
+</pre>
+
+<code>filetype plugin indent on</code> can replace the filetype statements above (see <code>:h :filetype-overview</code>) - felixhummel
+
+h2. Verifying Installation
+
+You should verify that your installation of vim-ruby is correct.
+
+A simple way to do this in Vim 7, which will test that the syntax, filetype, indent and omni completion scripts are working properly, is to:
+
+   1. Open a new Ruby source file. This file should have either a filename extension of '.rb' or the appropriate shebang line (eg. @#!/usr/bin/ruby@)
+
+
+   2. Edit the buffer and insert the string:
+<pre>
+<code>
+      1.upto(5) do |i|
+        puts "#{i}. Infinity, the star that would not die"
+      end
+</code>
+</pre>
+      The fragment should be highlighted and automatically indented as you type.
+
+
+   3. Add the 'dot' operator after the string and while in insert mode type @CTRL-XCTRL-O@:
+
+<pre>
+<code>
+        puts "#{i}. Infinity, the star that would not die".<CTRL-X><CTRL-O>
+</code>
+</pre>
+      A list of string methods should be offered in a pop-up window. You can navigate this list with @CTRL-N@ and @CTRL-P@ and use @CTRL-Y@ to accept a match.
+      NOTE: this step assumes you have Vim compiled with the Ruby interface (the output of @:help version@ should include +ruby)
+
+
+   4. Happy hacking!
+
+h2. Customising
+
+You can complement the system-wide settings with plugins placed within your home directory.
+
+Inside the directories @$HOME/.vim@ and @$HOME/.vim/after@ (Unix), or @$HOME/vimfiles@ and @$HOME/vimfiles/after@ (Windows), exists the same directory structure as found in @$VIMRUNTIME@: in particular, the subdirectories ftplugin, indent, and syntax. If you put a file ruby.vim in any of these directories, you can tailor the way Vim treats Ruby files to your own needs. Files placed in the @$HOME/.vim/after@ directory hierarchy can be used to _override_ or _add_ to the default settings in $VIMRUNTIME and files placed in the @$HOME/.vim@ will replace the default settings. See @:help runtimepath@ for more details.
+
+I see no need to tamper with syntax highlighting or indenting, but being able to have Vim load up a special configuration file whenever a Ruby file is loaded is a great benefit. In fact, it can load more than one file. Here are the three important files that Vim loads whenever I edit a Ruby program:
+
+    * vimfiles/ftplugin/ruby.vim
+    * vimfiles/ftplugin/ruby_structure.vim 
+
+You can see the pattern there. When the filetype is "ruby", Vim will load any files like those above.
+
+In my directory, ruby.vim sets textwidth, softtabstop, and shiftwidth. That's it. (These are inappropriate for the system-wide ftplugin, because they reflect user preferences.)
+
+ruby_structure contains a set of insert-mode mappings that make editing Ruby code much easier. My favourite one is the following:
+
+<pre>
+<code>
+imap <S-CR>    <CR><CR>end<Esc>-cc
+</code>
+</pre>
+
+This enables the following shortcut. Say I'm writing an if-statement. Having typed:
+
+<pre>
+<code>
+if name == "John"[<--cursor]
+</code>
+</pre>
+
+I can hit Shift-Enter and will get:
+
+<pre>
+<code>
+if name == "John"
+  [<--cursor]
+end
+</code>
+</pre>
+
+This saves typing and enables me to keep the program balanced. Of course it applies to @def, do, class, while, unless@ as well, and probably others.
+
+I will provide all the details of my personal Vim/Ruby configuration in an appendix in the near future. (Well, that hasn't happened because I haven't actually written any significant Ruby code for a while.)
+
+Maybe it will be useful to adopt the 2 spaces indend Ruby rule. In case use this
+
+<pre>
+<code>
+        set expandtab
+        set tabstop=2 shiftwidth=2 softtabstop=2
+        set autoindent
+</code>
+</pre>
+
+The following extension works with braces, too. Having typed:
+
+<pre>
+<code>
+ary.map { |elem|[<--cursor]
+</code>
+</pre>
+
+I can hit Shift-Enter and will get:
+
+<pre>
+<code>
+ary.map { |elem|
+  [<--cursor]
+}
+</code>
+</pre>
+
+Here's the code:
+
+<pre>
+<code>
+if !exists( "*EndToken" )
+  function EndToken()
+    let current_line = getline( '.' )
+    let braces_at_end = '{\s*\(|\(,\|\s\|\w\)*|\s*\)\?$'
+    if match( current_line, braces_at_end ) >= 0
+      return '}'
+    else
+      return 'end'
+    endif
+  endfunction
+endif
+
+imap <S-CR> <ESC>:execute 'normal o' . EndToken()<CR>O
+</code>
+</pre>
+
+-- PitCapitain?
+
+@<S-CR>@ didn't work for me, so I hacked this function to "do the right thing" (tm) when you press return. http://pmade.com/articles/2006/06/02/vim_mapping_for_ruby/
+
+In addition to above, I have found this quite helpful:
+
+<pre>
+<code>
+imap <<-    <<-QUOTE<CR><Tab><CR>QUOTE<Esc>-A
+</code>
+</pre>
+
+-- AnonymousRubyist
+
+h2. Postscript
+
+For more information
+
+Get the latest released vim-ruby files from "Vim-Ruby Configuration Files project":http://vim-ruby.rubyforge.org
+
+Created: 23 Oct 2002 Last Updated: 12 Apr 2006 (DougKearns)
+
+h2. Questions
+
+Some questions Ruby Vimmers may be able to answer (put here as they may help others)[should these move to a /discuss page, or would that make editing this page more painful?]:
+
+Is there a way to debug ruby code running inside vim (like printing the backtrace, etc) ?
+
+With matchit you can jump to the balancing word def...end, if...else...end, but is there a way to jump to the enclosing syntactical structure, such as the def...end, or from def...end to the enclosing class...end structure? Can this be done without creating maps (which are harder to look up/remember and in vim there's less namespace for them than in vi)?
+
+There's no way I know of to achieve this. It could be done imperfectly with search patterns.
+
+Is there a way to jump to a method of a given class in the file, for example if there are many similar named methods in different classes in the said file? I think this is equivalent to asking if there is tags support for ruby, but I've not done much with tags.
+
+Exuberant ctags does support Ruby (see bottom of page for more), but I doubt it would be able to resolve names in the face of many options. Good for basic navigation, though, and Vim's support for ctags is excellent.
+
+[Gnu Global] [Irish mirror] may help with this, though it doesn't support Ruby at the time of writing (04-APR-2003). It does support vim though.
+
+    What about [taglist] ? It works wonders for me (except the fact that it only does the current file) SimonVandemoortele 
+
+h2. External Pages on using Vim for Ruby development
+
+    * Another entire page with many excellent suggestions is at: "How To Use Vim With Rails":http://rails.vim.tpope.net/. 
+
+    * Another take on folding is available here: "SimpleFold Plugin":http://eigenclass.org/hiki/simplefold 
